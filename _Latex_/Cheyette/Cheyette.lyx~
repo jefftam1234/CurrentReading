@@ -1,0 +1,348 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1cm
+\topmargin 1cm
+\rightmargin 1cm
+\bottommargin 1cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Cheyette/Interest rate notes
+\end_layout
+
+\begin_layout Author
+Jeff Tam
+\end_layout
+
+\begin_layout Standard
+Some notes on the approach of Cheyette, this will connect with the wiener-chaos
+ expansion approach by Funahashi to arrive at the approximation equation
+ for the vanilla swaption price under Multi-factor Local Stochastic Volatility
+ qG model
+\end_layout
+
+\begin_layout Standard
+First we need to establish a couple things, such as the forward rate dynamic
+ (in terms of the markovian variable, the centered short-rate 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+, then the bond reconstitution formula, and finally the SDE setup of the
+ model.
+ The material taken are from the Hoores, Funahashi-Kijima and Andersen-Piterbarg
+\end_layout
+
+\begin_layout Section
+Cheyette as the HJM representation with Seperable volatility
+\end_layout
+
+\begin_layout Standard
+The starting term is the HJM setup:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+df\left(t,T\right)=\sigma_{f}(t,T)\left(\int_{t}^{T}\sigma_{f}\left(t,s\right)ds\right)dt+\sigma_{f}\left(t,T\right)dW_{t}^{Q}\label{eq:HJM}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The volatility specification of the Cheyette is a general gaussian-short-rate
+ model where it can be seperated into the instantaneous part 
+\begin_inset Formula $h\left(t\right)$
+\end_inset
+
+ and the term-structure part 
+\begin_inset Formula $g\left(t,T\right)=\exp\left(-\int_{t}^{T}\kappa_{u}du\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Some of the useful identities that will be used later is given here:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\sigma_{f}\left(t,T\right)=h\left(t\right)g\left(t,T\right)=h\left(t\right)g\left(t,s\right)g\left(s,T\right)=\sigma_{f}$
+\end_inset
+
+
+\begin_inset Formula $\left(t,s\right)$
+\end_inset
+
+
+\begin_inset Formula $g\left(s,T\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\frac{\partial}{\partial T}\sigma_{f}\left(t,T\right)=-\kappa_{T}\sigma_{f}\left(t,T\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The main motivation of this proof is to express the forward rate dynamic
+ in terms of the markovian centered short-rate 
+\begin_inset Formula $x_{t}=r_{t}-f\left(0,t\right)=f\left(t,t\right)-f\left(0,t\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Forward rate dynamic
+\end_layout
+
+\begin_layout Standard
+This is the result from Hoores
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{rl}
+f\left(t,T\right) & =f\left(0,T\right)+\int_{0}^{t}\sigma_{f}\left(s,T\right)\left(\int_{s}^{T}\sigma_{f}\left(s,u\right)du\right)ds+\int_{0}^{t}\sigma_{f}\left(s,T\right)dW_{s}^{Q}\\
+ & =f\left(0,T\right)+g\left(t,T\right)\int_{0}^{t}\sigma_{f}\left(s,t\right)\left(\int_{s}^{T}\sigma_{f}\left(s,u\right)du\right)ds+g\left(t,T\right)\int_{0}^{t}\sigma_{f}\left(s,t\right)dW_{s}^{Q}\\
+ & =f\left(0,T\right)+g\left(t,T\right)\left(\int_{0}^{t}\sigma_{f}\left(s,t\right)\left(\int_{s}^{T}\sigma_{f}\left(s,u\right)du\right)ds+\int_{0}^{t}\sigma_{f}\left(s,t\right)dW_{s}^{Q}\right)\\
+ & =f\left(0,T\right)+g\left(t,T\right)\left(\int_{0}^{t}\sigma_{f}\left(s,t\right)\left(\int_{s}^{t}\sigma_{f}\left(s,u\right)du+\int_{t}^{T}\sigma_{f}\left(s,u\right)du\right)ds+\int_{0}^{t}\sigma_{f}\left(s,t\right)dW_{s}^{Q}\right)\\
+ & =f\left(0,T\right)+g\left(t,T\right)\left(x_{t}+\int_{0}^{t}\sigma_{f}\left(s,t\right)\left(\int_{t}^{T}\sigma_{f}\left(s,u\right)du\right)ds\right)\\
+ & =f\left(0,T\right)+g\left(t,T\right)\left(x_{t}+\int_{0}^{t}\sigma_{f}\left(s,t\right)\left(\int_{t}^{T}g\left(t,u\right)\sigma_{f}\left(s,t\right)du\right)ds\right)\\
+ & =f\left(0,T\right)+g\left(t,T\right)\left(x_{t}+\int_{0}^{t}\sigma_{f}^{2}\left(s,t\right)\left(\int_{t}^{T}g\left(t,u\right)du\right)ds\right)\\
+ & =f\left(0,T\right)+g\left(t,T\right)\left(x_{t}+\left(\int_{t}^{T}g\left(t,u\right)du\right)\int_{0}^{t}\sigma_{f}^{2}\left(s,t\right)ds\right)\\
+ & =f\left(0,T\right)+g\left(t,T\right)\left(x_{t}+B\left(t,T\right)y_{t}\right)
+\end{array}\label{eq:qGForwardDynamic}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We have use the HJM representation for 
+\begin_inset Formula $x_{t}=f\left(t,t\right)-f\left(0,T\right)=\int_{0}^{t}\sigma_{f}\left(s,t\right)\left(\int_{s}^{t}\sigma_{f}\left(s,u\right)du\right)ds+\int_{0}^{t}\sigma_{f}\left(s,t\right)dW_{s}^{Q}$
+\end_inset
+
+, and we have recovered the affine structure of the forward dynamic, where
+ 
+\begin_inset Formula $B\left(t,T\right)=\int_{t}^{T}g\left(t,u\right)du$
+\end_inset
+
+, and 
+\begin_inset Formula $y_{t}=\int_{0}^{t}\sigma_{f}^{2}\left(s,t\right)ds$
+\end_inset
+
+, we can see that the state variables 
+\begin_inset Formula $\left(x_{t},y_{t}\right)$
+\end_inset
+
+ are the information up to time 
+\begin_inset Formula $t$
+\end_inset
+
+.
+ Where the function 
+\begin_inset Formula $g\left(t,T\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $B\left(t,T\right)$
+\end_inset
+
+ contains information of the forward terms from time 
+\begin_inset Formula $t$
+\end_inset
+
+ to future tenor 
+\begin_inset Formula $T$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Bond Price Reconstitution formula
+\end_layout
+
+\begin_layout Standard
+As with other interest rate model, we can get the zero-coupon bond price
+ 
+\begin_inset Formula $P\left(t,T\right)$
+\end_inset
+
+ from the forward rate dynamic
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{rl}
+P\left(t,T\right) & =\exp\left(-\int_{t}^{T}f\left(t,s\right)ds\right)\\
+ & =\exp\left(-\int_{t}^{T}\left(f\left(0,s\right)+g\left(t,s\right)\left(x_{t}+B\left(t,s\right)y_{t}\right)\right)ds\right)\\
+ & =\frac{P\left(0,T\right)}{P\left(0,t\right)}\exp\left(-\int_{t}^{T}\left(g\left(t,s\right)\left(x_{t}+B\left(t,s\right)y_{t}\right)\right)ds\right)\\
+ & =\frac{P\left(0,T\right)}{P\left(0,t\right)}\exp\left(-x_{t}\int_{t}^{T}g\left(t,s\right)ds-y_{t}\int_{t}^{T}g\left(t,s\right)B\left(t,s\right)ds\right)\\
+ & =\frac{P\left(0,T\right)}{P\left(0,t\right)}\exp\left(-B\left(t,T\right)x_{t}-\int_{t}^{T}g\left(t,s\right)B\left(t,s\right)ds\cdot y_{t}\right)\\
+ & =\frac{P\left(0,T\right)}{P\left(0,t\right)}\exp\left(-B\left(t,T\right)x_{t}-\int_{t}^{T}g\left(t,s\right)\left(\int_{t}^{T}g\left(t,u\right)du\right)ds\cdot y_{t}\right)\\
+ & =\frac{P\left(0,T\right)}{P\left(0,t\right)}\exp\left(-B\left(t,T\right)x_{t}-\frac{1}{2}\left(\int_{t}^{T}g\left(t,s\right)ds\right)^{2}\cdot y_{t}\right)\\
+ & =\frac{P\left(0,T\right)}{P\left(0,t\right)}\exp\left(-B\left(t,T\right)x_{t}-\frac{1}{2}B\left(t,T\right)^{2}y_{t}\right)
+\end{array}\label{eq:qGBondFormula}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here we use the following identity: 
+\begin_inset Formula $\int\left(u^{2}\right)'=\int2u'u$
+\end_inset
+
+, so 
+\begin_inset Formula $\int u'u=\frac{1}{2}u^{2}$
+\end_inset
+
+, and set 
+\begin_inset Formula $u=\int g\left(t,\cdot\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Centered Short-rate dynamic
+\end_layout
+
+\begin_layout Standard
+As a way to simulate the qG model, we also need to get the SDE for the qG
+ pair 
+\begin_inset Formula $\left(x_{t},y_{t}\right)$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{rl}
+f\left(t,T\right) & =f\left(0,T\right)+\int_{0}^{t}\sigma_{f}\left(s,T\right)\left(\int_{s}^{T}\sigma_{f}\left(s,u\right)du\right)ds+\int_{0}^{t}\sigma_{f}\left(s,T\right)dW_{s}^{Q}\\
+r_{t}=\underset{T\downarrow t}{\lim}f\left(t,T\right) & =f\left(0,t\right)+\int_{0}^{t}\sigma_{f}\left(s,t\right)\left(\int_{s}^{t}\sigma_{f}\left(s,u\right)du\right)ds+\int_{0}^{t}\sigma_{f}\left(s,t\right)dW_{s}^{Q}\\
+dr_{t}=dx_{t} & =\sigma_{f}\left(t,t\right)\left(\int_{t}^{t}\sigma_{f}\left(t,u\right)du\right)dt+\int_{0}^{t}\frac{\partial}{\partial t}\text{\left(\sigma_{f}\left(s,t\right)\left(\int_{s}^{t}\sigma_{f}\left(s,u\right)du\right)\right)}ds\cdot dt+\sigma_{f}\left(t,t\right)dW_{t}^{Q}-\kappa_{t}\int_{0}^{t}\sigma_{f}\left(s,t\right)dW_{s}^{Q}\\
+ & =\int_{0}^{t}\frac{\partial}{\partial t}\text{\left(\sigma_{f}\left(s,t\right)\left(\int_{s}^{t}\sigma_{f}\left(s,u\right)du\right)\right)}ds\cdot dt+\sigma_{f}\left(t,t\right)dW_{t}^{Q}-\kappa_{t}\int_{0}^{t}\sigma_{f}\left(s,t\right)dW_{s}^{Q}\\
+ & =-\kappa_{t}\int_{0}^{t}\text{\sigma_{f}\left(s,t\right)\left(\int_{s}^{t}\sigma_{f}\left(s,u\right)du\right)}ds\cdot dt+\int_{0}^{t}\text{\sigma_{f}\left(s,t\right)\sigma_{f}\left(s,t\right)}ds\cdot dt+\sigma_{f}\left(t,t\right)dW_{t}^{Q}-\kappa_{t}\int_{0}^{t}\sigma_{f}\left(s,t\right)dW_{s}^{Q}\\
+ & =-\kappa_{t}\int_{0}^{t}\text{\sigma_{f}\left(s,t\right)\left(\int_{s}^{t}\sigma_{f}\left(s,u\right)du\right)}ds\cdot dt-\kappa_{t}\int_{0}^{t}\sigma_{f}\left(s,t\right)dW_{s}^{Q}+\int_{0}^{t}\text{\sigma_{f}\left(s,t\right)\sigma_{f}\left(s,t\right)}ds\cdot dt+\sigma_{f}\left(t,t\right)dW_{t}^{Q}\\
+ & =-\kappa_{t}x_{t}dt+\int_{0}^{t}\text{\sigma_{f}\left(s,t\right)\sigma_{f}\left(s,t\right)}ds\cdot dt+\sigma_{f}\left(t,t\right)dW_{t}^{Q}\\
+ & =-\kappa_{t}x_{t}dt+y_{t}dt+h\left(t\right)dW_{t}^{Q}\\
+ & =\left(y_{t}-\kappa_{t}x_{t}\right)dt+h\left(t\right)dW_{t}^{Q}
+\end{array}\label{eq:qGCenteredShortRate}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Approximation Schemes
+\end_layout
+
+\begin_layout Subsection
+Basic set up
+\end_layout
+
+\begin_layout Standard
+The approach to the approximation for calibration is pretty similar for
+ all models, is to find a robust way to calculate the vanilla swaption as
+ that is the instrument that can calibrate the market (3 dimensions, the
+ maturity, tenor and strikes).
+ The end goal is similar, is to get to the 
+\end_layout
+
+\end_body
+\end_document
