@@ -490,5 +490,268 @@ The Funahashi-Kijima scheme is slightly difference only in the treatment
 Change of Measure to Lognormal Swap Model
 \end_layout
 
+\begin_layout Standard
+The argument is made that the swap rate is the differential two zero coupon
+ bond dividend by the numeraire (annuity), such that in the swap measure
+ it would be martingale.
+ This would allow for much easier derivation since only the volatility part
+ is needed, there are ways to model this.
+ For e.g.
+ in the Piterbarg (2003) model, which models the forward rates 
+\begin_inset Formula $F_{j}\left(t\right)$
+\end_inset
+
+ as shifted-lognormal diffusion with Heston type volatility.
+ Where in the Hoores and Kijima-Funahashi approach the centered-short-rate
+ is the state variables, where for Hoores, the local volatility term is
+ displaced-diffusion based on the short-rate 
+\begin_inset Formula $r_{t}$
+\end_inset
+
+ (see Hoores (4.13)), and the Kijima-Funahashi approach has the local volatility
+ terms based on forward-rates
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{rl}
+dS_{\alpha,\beta}\left(t\right) & =\frac{\partial S_{\alpha,\beta}\left(t\right)}{\partial x_{t}}dx_{t}\\
+ & =\frac{\partial S_{\alpha,\beta}\left(t\right)}{\partial x_{t}}h\left(t\right)dW_{t}^{Q}+\cdots dt\\
+ & =\frac{\partial S_{\alpha,\beta}\left(t\right)}{\partial x_{t}}h\left(t\right)dW_{t}^{\alpha,\beta}
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where the partial derivative:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{rl}
+\frac{\partial S_{\alpha,\beta}\left(t\right)}{\partial x_{t}} & =\frac{\partial\left(\frac{P\left(t,T_{\alpha}\right)-P\left(t,T_{\beta}\right)}{A_{\alpha,\beta}\left(t\right)}\right)}{\partial x_{t}}\\
+ & =-\frac{B\left(t,T_{\alpha}\right)P\left(t,T_{\alpha}\right)-B\left(t,T_{\beta}\right)P\left(t,T_{\beta}\right)}{A_{\alpha,\beta}\left(t\right)}-\frac{P\left(t,T_{\alpha}\right)-P\left(t,T_{\beta}\right)}{A_{\alpha,\beta}^{2}\left(t\right)}\left(-\sum_{i=\alpha}^{\beta}\tau_{i}B\left(t,T_{i}\right)P\left(t,T_{i}\right)\right)\\
+ & =-\left(\text{\frac{B\left(t,T_{\alpha}\right)P\left(t,T_{\alpha}\right)-B\left(t,T_{\beta}\right)P\left(t,T_{\beta}\right)}{A_{\alpha,\beta}\left(t\right)}-\frac{S_{\alpha,\beta}\left(t\right)\sum_{i=\alpha}^{\beta}\tau_{i}B\left(t,T_{i}\right)P\left(t,T_{i}\right)}{A_{\alpha,\beta}\left(t\right)}}\right)
+\end{array}\label{eq:PartialDerivativewrtXt}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Another way to represents:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{rl}
+ & -\frac{B\left(t,T_{\alpha}\right)P\left(t,T_{\alpha}\right)-B\left(t,T_{\beta}\right)P\left(t,T_{\beta}\right)}{A_{\alpha,\beta}\left(t\right)}+\frac{P\left(t,T_{\alpha}\right)-P\left(t,T_{\beta}\right)}{A_{\alpha,\beta}^{2}\left(t\right)}\sum_{i=\alpha}^{\beta}\tau_{i}B\left(t,T_{i}\right)P\left(t,T_{i}\right)\\
+ & =-1\cdot\left(\frac{B\left(t,T_{\alpha}\right)P\left(t,T_{\alpha}\right)}{A_{\alpha,\beta}\left(t\right)}-\frac{P\left(t,T_{\alpha}\right)\sum_{i=\alpha}^{\beta}\tau_{i}B\left(t,T_{i}\right)P\left(t,T_{i}\right)}{A_{\alpha,\beta}^{2}\left(t\right)}\right)\\
+ & \quad+1\cdot\left(\frac{B\left(t,T_{\beta}\right)P\left(t,T_{\beta}\right)}{A_{\alpha,\beta}\left(t\right)}-\frac{P\left(t,T_{\beta}\right)\sum_{i=\alpha}^{\beta}\tau_{i}B\left(t,T_{i}\right)P\left(t,T_{i}\right)}{A_{\alpha,\beta}^{2}\left(t\right)}\right)\\
+ & =\sum_{j=\alpha,\beta}s\left(j\right)\left\{ \frac{B\left(t,T_{j}\right)P\left(t,T_{j}\right)}{A_{\alpha,\beta}\left(t\right)}-\frac{P\left(t,T_{j}\right)\sum_{l=\alpha+1}^{\beta}\tau_{l}B\left(t,T_{l}\right)P\left(t,T_{l}\right)}{A_{\alpha,\beta}^{2}\left(t\right)}\right\} 
+\end{array}\label{eq:eq:PartialDerivativewrtXt_Funahashi}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where we use the bond formula 
+\begin_inset Formula $P\left(t,T\right)=\exp\left(-B\left(t,T\right)x_{t}-\frac{1}{2}B^{2}\left(t,T\right)y_{t}\right)$
+\end_inset
+
+, 
+\begin_inset Formula $\frac{dP\left(t,T_{i}\right)}{dx_{t}}=-B\left(t,T_{i}\right)P\left(t,T\right)$
+\end_inset
+
+, 
+\begin_inset Formula $\frac{dA_{\alpha,\beta}\left(t\right)}{dx_{t}}=\frac{d\sum_{i=\alpha}^{\beta}\tau_{i}P\left(t,T_{i}\right)}{dx_{t}}=-\sum_{i=\alpha}^{\beta}\tau_{i}B\left(t,T_{i}\right)P\left(t,T_{i}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Andreasen and Andersen (2002), Piterbarg (2003) approach
+\end_layout
+
+\begin_layout Standard
+For the Andreasen and Andersen (2002), Piterbarg (2003) approach and Funahashi-K
+ijima both have the same starting point and forward volatility specification
+ (see Andreasen (2006) eq 11(a)(b)), here we adapt the multi-factor model
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+dF_{i}\left(t\right)=g\left(t,t+\delta_{i}\right)^{T}\left(h\left(t\right)h\left(t\right)^{T}\right)B\left(t,t+\delta_{i}\right)dt+\left\{ \Gamma\left(t\right)h\left(t\right)dW^{Q}\left(t\right)\right\} _{i^{th}row}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since the forward dynamic is used for projecting to the swap rate dynamic
+ mainly, we can ignore the drift term (since Swap rate is MTG under swap
+ measure), and we further specify the volatility measure in multi-dimensional
+ sense
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{rl}
+dF\left(t\right) & =\Gamma\left(t\right)h\left(t\right)dW^{Q}\left(t\right)\\
+ & =\sqrt{z\left(t,\omega_{t}\right)}\left(I_{m\left(t\right)}I_{F\left(t\right)+\nu}+\left(I-I_{m\left(t\right)}\right)I_{F\left(0\right)+\nu}\right)I_{\lambda\left(t\right)}R\left(t\right)dW^{Q}\left(t\right)\\
+dz\left(t,\omega_{t}\right) & =\alpha\left(t\right)\left(\theta\left(t\right)-z\left(t\right)\right)dt+\epsilon\left(t\right)\sqrt{z\left(t\right)}dZ\left(t\right)\\
+dZ\cdot dW & =0
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\Gamma\left(t\right)=\left(\begin{array}{ccc}
+e^{\int_{t}^{t+\delta_{1}}\kappa_{1}\left(s\right)ds} & \cdots & e^{\int_{t}^{t+\delta_{1}}\kappa_{d}\left(s\right)ds}\\
+\vdots & \ddots & \vdots\\
+e^{\int_{t}^{t+\delta_{d}}\kappa_{1}\left(s\right)ds} & \cdots & e^{\int_{t}^{t+\delta_{d}}\kappa_{d}\left(s\right)ds}
+\end{array}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+h\left(t\right)=\sqrt{z\left(t,\omega_{t}\right)}\Gamma^{-1}\left(t\right)\left(I_{m\left(t\right)}I_{F\left(t\right)+\nu}+\left(I-I_{m\left(t\right)}\right)I_{F\left(0\right)+\nu}\right)I_{\lambda\left(t\right)}R\left(t\right)dW^{Q}\left(t\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The inverse of the reversion matrix 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ appears in the 
+\begin_inset Formula $h\left(t\right)$
+\end_inset
+
+ here as a compensation for the original forward dynamic (one can compare
+ the multi-dimensional case with (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:qGForwardDynamic"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) , both the centered-short-rate and swap-rate dynamic (as a function of
+ 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+ do not have this 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ (or 
+\begin_inset Formula $g\left(t,T\right)$
+\end_inset
+
+) term in the SDE.
+\end_layout
+
+\begin_layout Standard
+We can see the d-dimension decays, for e.g.
+ the first tenor 
+\begin_inset Formula $t+\delta_{i}$
+\end_inset
+
+ where the rows 
+\begin_inset Formula $\left\{ e^{\int_{t}^{t+\delta_{1}}\kappa_{1}\left(s\right)ds}\cdots e^{\int_{t}^{t+\delta_{1}}\kappa_{d}\left(s\right)ds}\right\} $
+\end_inset
+
+are multiplied with the d-dimension Brownian motion 
+\begin_inset Formula $\left\{ dW^{1}\cdots dW^{d}\right\} ^{T}$
+\end_inset
+
+to get the accumulated effects.
+ 
+\end_layout
+
+\begin_layout Standard
+So now we can write the swap-rate as following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+dS_{\alpha,\beta}\left(t\right)=h\left(t\right)\frac{\partial S_{\alpha,\beta}\left(t\right)}{\partial x_{t}}dW_{t}^{\alpha,\beta}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As we can see previously, the dynamic of the equation above is highly complciate
+d given the multi-dimension displacement, skewness, vol-of-vol.
+ So Piterbarg employ the Markovian Projection, onto the following LSM:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{cases}
+dS_{\alpha,\beta}^{*}\left(t\right) & =\sqrt{z\left(t\right)}\sigma_{t}\left\{ b_{t}\left(S_{\alpha,\beta}^{*}\left(t\right)+c\right)+\left(1-b_{t}\right)\left(S_{\alpha,\beta}^{*}\left(0\right)+c\right)\right\} dW_{t}^{\alpha,\beta}\\
+dz^{*}\left(t\right) & =\alpha\left(t\right)\left(\theta\left(t\right)-z^{*}\left(t\right)\right)dt+\epsilon\left(t\right)\sqrt{z^{*}\left(t\right)}dZ\left(t\right)
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Funahashi-Kijima Approach
+\end_layout
+
 \end_body
 \end_document
