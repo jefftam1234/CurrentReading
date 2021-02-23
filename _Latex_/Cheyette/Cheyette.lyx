@@ -245,6 +245,31 @@ We have use the HJM representation for
 .
 \end_layout
 
+\begin_layout Standard
+Also just from the HJM representation we can work out the increment of the
+ forward rate, this will be useful for the fixed tenor 
+\begin_inset Formula $f\left(t,t+\delta_{i}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{rl}
+df\left(t,T_{i}\right) & =\sigma_{f}(t,T_{i})\left(\int_{t}^{T_{i}}\sigma_{f}\left(t,s\right)ds\right)dt+\sigma_{f}\left(t,T_{i}\right)dW_{t}^{Q}\\
+ & =h\left(t\right)g\left(t,T_{i}\right)\left(\int_{t}^{T_{i}}h\left(t\right)g\left(t,s\right)ds\right)dt+h\left(t\right)g\left(t,T_{i}\right)dW_{t}^{Q}\\
+ & =h^{2}\left(t\right)g\left(t,T_{i}\right)\left(\int_{t}^{T_{i}}g\left(t,s\right)ds\right)dt+h\left(t\right)g\left(t,T_{i}\right)dW_{t}^{Q}\\
+ & =h^{2}\left(t\right)g\left(t,T_{i}\right)B\left(t,T_{i}\right)dt+h\left(t\right)g\left(t,T_{i}\right)dW_{t}^{Q}
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Bond Price Reconstitution formula
 \end_layout
@@ -407,10 +432,70 @@ The approach to the approximation for calibration is pretty similar for
 \end_layout
 
 \begin_layout Standard
+The main ingredient as suggested in Andreasen (add source here), the state-varia
+bles SDEs with the Bond Price formula, along with the specification of the
+ volatility term 
+\begin_inset Formula $h\left(t\right)$
+\end_inset
+
+ is all it is needed for the model.
+ In the most extensive case, this will be a multi-factor qGLSV model, where
+ the correlation structure is incorporated directly into the local volatility
+ term in matrix form, this is the idea of Andreasen (2002), and adopted
+ by Funahashi-Kijima.
+\end_layout
+
+\begin_layout Standard
 For basic model to local volatility model (qGLV), is to use Markovian Projection
  and Time-Averaging (a la Piterbarg) to project it to the Displaced-Diffusion
- Black-Scholes model with the effective skewness, effective volatility and
- 
+ Black-Scholes model with the effective skewness, effective volatility,
+ then uses the Displaced Diffusion BS equation to price the swaption.
+ For qG model with Stochastic Volatility (along with the local volatility),
+ several procedures are needed, (i) first step is to change from risk-neutral
+ measure (bond price) to lognormal swap measure, this allows us to employ
+ Displaced-Diffusion BS (or Fourier pricing with stochastic volatility a
+ la Lewis-Lipton).
+ (ii) Since the swap-dynamic is a complicated dynamic (multi-factor, thus
+ not exactly (quasi)Gaussian, involving shift/skew/correlation), we employ
+ Markovian Projection to project it onto a zero-drift, displaced-diffusion
+ with Heston-type volatility model, with time-dependent parameter.
+ In original paper suggested by Andersen and Andreasen (2002), the direct
+ numerical fourier transform (with known form given in Lewis-Lipton) to
+ arrive at price.
+ (iii) further step can be done here, to use the time-averaging technique
+ proposed by Piterbarg to transform the time-dependent SDE into a constant
+ SDE, here one of the parameter (the 
+\begin_inset Formula $\lambda$
+\end_inset
+
+) has to be solved numerically by the Riccati ODE, now with the parameters
+ are all in constant.
+ One can employ the closed-form Lewis-Lipton formula to get the option price.
+\end_layout
+
+\begin_layout Standard
+The Funahashi-Kijima scheme is slightly difference only in the treatment
+ of (ii), they proposed a parametric form of the local volatility term of
+ the lognormal swap rate dynamic, and use the Ito-Chaos Expansion to arrive
+ at the approximation with high-degree of the proposed parametric parameters
+ (time-dependent) in terms of the original forward-rate dynamic volatility
+ specification (the asymptoptic expansion of them, expanding around the
+ non-random function, and with higher terms in iterated stochastic integral
+ and their conditional expectation).
+ The parameters are then render as constant using the same time-averaging
+ technique proposed by Piterbarg.
+\end_layout
+
+\begin_layout Subsection
+Change of Measure to Lognormal Swap Model
+\end_layout
+
+\begin_layout Section
+Andreasen, Piterbarg approach
+\end_layout
+
+\begin_layout Section
+Funahashi-Kijima Approach
 \end_layout
 
 \end_body
