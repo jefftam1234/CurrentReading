@@ -27,6 +27,9 @@ def print_matrix(matrix):
     for row in matrix:
         print(" ".join(["{:.4f}".format(x) for x in row]))
 
+def print_vector(vector):
+    print(" ".join(["{:.4f}".format(x) for x in vector]))
+
 
 def print_qr(q, r):
     if q.shape[0] > 8:
@@ -62,18 +65,32 @@ def householderQR(A, mode="default"):
         return Q, R
     else:
         return R
+def householderQR2(A):
+    m, n = A.shape
+    A_mod = copy.deepcopy(A)
 
+    for k in range(n):
+        x = A_mod[k:, k]                                #copy vector from k-th column of input matrix A
+        e = np.zeros(m - k)
+        e[0] = 1
+        u = np.sign(x[0]) * np.linalg.norm(x) * e + x   # create householder reflector vector u
+        v = u / np.linalg.norm(u)                       # normalize vector u
+        H = np.eye(e.size)-2*np.outer(v,v)              # create householder matrix H by outer product
+        A_mod[k:, k:] = np.dot(H, A_mod[k:, k:])        # reflect the matrix's so column k will have upper triangular element
 
-if __name__ == "__main__":
+    R = A_mod[:n, :n]
+    return R
+
+def householder_test():
     # m = 20
     # n = 20
     # arr = generate_array(m, n)
     # arr = np.array( [[2, -2, 18], [2,1,0], [1,2,0]], dtype=np.float64)
     arr = np.array([
-    [1, -1, 4],
-    [1, 4, -2],
-    [1, 4,  2],
-    [1, -1, 0],
+        [1, -1, 4],
+        [1, 4, -2],
+        [1, 4, 2],
+        [1, -1, 0],
     ], dtype=np.float64
     )
 
@@ -83,12 +100,16 @@ if __name__ == "__main__":
     q, r = householderQR(arr)
     rtr = np.dot(r.T, r)
     print_qr(q, r)
+    print("\nCustomized QR result 2:\n")
+    r2 = householderQR2(arr)
+    rtr2 = np.dot(r2.T, r2)
+    print_matrix(r2)
     print("\nScipy QR result:\n")
     Q, R = np.linalg.qr(arr)
     RTR = np.dot(R.T, R)
     print_qr(Q, R)
-    qr_custom = np.dot(q,r)
-    qr_scipy = np.dot(Q,R)
+    qr_custom = np.dot(q, r)
+    qr_scipy = np.dot(Q, R)
     print("\n Reproduce of the original matrix")
     print("custom:")
     print_matrix(qr_custom)
@@ -100,3 +121,26 @@ if __name__ == "__main__":
     print_matrix(qr_scipy - arr)
     print("\ndifference of R'*R of custom vs scipy")
     print_matrix(rtr - RTR)
+    print("\ndifference of R'*R of custom2 vs scipy")
+    print_matrix(rtr2 - RTR)
+
+def test_vector_util():
+    a = np.array([1, 2, 3])
+    b = np.array([4, 5, 6])
+    c = a + b
+    f = np.outer(a, b)
+    g = np.inner(f, c)
+    print("\nouter product:")
+    print_matrix(f)
+    print("\nmatrix-vector product:")
+    print_vector(g)
+    A = np.array([[1, 2, 3], [4, 5, 6]])
+    B = np.array([[1, 2], [3, 4], [5, 6]])
+    C = np.dot(A, B)
+    print("Product of A and B:")
+    print_matrix(C)
+
+
+if __name__ == "__main__":
+    householder_test()
+    #test_vector_util()

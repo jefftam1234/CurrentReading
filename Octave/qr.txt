@@ -1,1 +1,48 @@
-/home/jeff/JTDev/JTQuantCuda/Ideas/qr.txt
+__device__ void householderQR2_kernel(double *A, int m, int n, int k) {
+    int e_size = m - k;
+    double x[m - k];
+    for (int i = k; i < m; i++) x[i - k] = A[i * n + k];
+    double e[m - k];
+    e[0] = 1;
+    double x_norm = sqrt(inner(x, x, e_size));
+    double sign_x = x[0] >= 0 ? 1 : -1;
+    double u[m - k];
+    for(int i=0; i<e_size; i++) u[i] = sign_x * x_norm * e[i] + x[i];
+    double v_norm = sqrt(inner(u, u, e_size));
+    double v[m - k];
+    for (int i = 0; i < e_size; i++) v[i] = u[i] / v_norm;
+
+    double H[e_size][e_size];
+    for (int i = 0; i < e_size; i++) {
+        for (int j = 0; j < e_size; j++) {
+            H[i][j] = (i == j) ? 1 : 0;
+            H[i][j] -= 2 * v[i] * v[j];
+        }
+    }
+
+    double temp[e_size][n - k];
+    for (int i = 0; i < e_size; i++) {
+        for (int j = 0; j < n - k; j++) {
+            temp[i][j] = 0;
+            for (int l = 0; l < e_size; l++) {
+                temp[i][j] += H[i][l] * A[(k + l) * n + (k + j)];
+            }
+        }
+    }
+
+    for (int i = 0; i < e_size; i++) {
+        for (int j = 0; j < n - k; j++) {
+            A[(k + i) * n + (k + j)] = temp[i][j];
+        }
+    }
+}
+
+__device__ double inner(double *a, double *b, int size) {
+    double result = 0;
+    for (int i = 0; i < size; i++) {
+        result += a[i] * b[i];
+    }
+    return result;
+}
+
+This function calculates the dot product of two vectors a and b of length size. The result is stored in the result variable and returned as the final output of the function.
