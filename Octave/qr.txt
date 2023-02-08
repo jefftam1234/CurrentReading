@@ -1,0 +1,1 @@
+/home/jeff/JTDev/JTQuantCuda/Ideas/qr.txt
