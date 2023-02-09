@@ -35,13 +35,13 @@ namespace JTQuant::TestSuites {
 
     vector<vector<double>> identity(int n);
 
-    vector<vector<vector<double>>> householderQR2(vector<vector<double>> A);
+    vector<vector<vector<double>>> householderQR(vector<vector<double>> A);
 
     int vector_util_test();
 
-    int householder_qr_test();
+    int householder_qr_cpu_test();
 
-
+    int householder_qr_gpu_test();
 }
 
 #endif //JTQUANTCUDA_MATRIXDECOMPOSITIONTEST_CUH

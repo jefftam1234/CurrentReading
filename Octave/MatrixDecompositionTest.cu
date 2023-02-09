@@ -146,7 +146,7 @@ int JTQuant::TestSuites::vector_util_test() {
     return 0;
 }
 
-vector<vector<vector<double>>> JTQuant::TestSuites::householderQR2(vector<vector<double>> A) {
+vector<vector<vector<double>>> JTQuant::TestSuites::householderQR(vector<vector<double>> A) {
     int m = A.size();
     int n = A[0].size();
     vector<vector<double> > A_mod = A;
@@ -211,7 +211,7 @@ vector<vector<vector<double>>> JTQuant::TestSuites::householderQR2(vector<vector
     return {Q, R};
 }
 
-int JTQuant::TestSuites::householder_qr_test() {
+int JTQuant::TestSuites::householder_qr_cpu_test() {
     vector<vector<double> > A = {
             {1.0, -1.0, 4.0},
             {1.0, 4.0,  -2.0},
@@ -219,7 +219,7 @@ int JTQuant::TestSuites::householder_qr_test() {
             {1.0, -1.0, 0.0}
     };
 
-    vector<vector<vector<double>>> QR = householderQR2(A);
+    vector<vector<vector<double>>> QR = householderQR(A);
     vector<vector<double>> Q = QR[0];
     vector<vector<double>> R = QR[1];
 
@@ -242,13 +242,177 @@ int JTQuant::TestSuites::householder_qr_test() {
 
     vector<vector<double>> RTR = product(transpose_R, R);
 
-    cout << "R:" << endl;
+    cout << "RTR:" << endl;
     for (int i = 0; i < RTR.size(); i++) {
         for (int j = 0; j < RTR[0].size(); j++)
             cout << setw(12) << setfill(' ') << fixed << setprecision(6) << RTR[i][j];
         cout << endl;
     }
 
+    return 0;
+}
+
+//__device__ void householderQR_kernel(double *A, int m, int n) {
+//    for (int k = 0; k < n; k++) {
+//        int e_size = m - k;
+//        double x[e_size];
+//        double e[e_size];
+//        double u[e_size];
+//        double v[e_size];
+//        double H[e_size][e_size];
+//        double temp[e_size][n - k];
+//        double x_norm, u_norm;
+//        for (int i = k; i < m; i++) x[i - k] = A[i * n + k];
+//        e[0] = 1;
+//        for (int i = 0; i < e_size; i++) x_norm += x[i] * x[i];
+//        x_norm = sqrt(x_norm);
+//        double sign_x = x[0] >= 0 ? 1 : -1;
+//        for (int i = 0; i < e_size; i++) u[i] = sign_x * x_norm * e[i] + x[i];
+//        for (int i = 0; i < e_size; i++) u_norm += u[i] * u[i];
+//        u_norm = sqrt(u_norm);
+//        for (int i = 0; i < e_size; i++) v[i] = u[i] / u_norm;
+//
+//
+//        for (int i = 0; i < e_size; i++) {
+//            for (int j = 0; j < e_size; j++) {
+//                H[i][j] = (i == j) ? 1 : 0;
+//                H[i][j] -= 2 * v[i] * v[j];
+//            }
+//        }
+//
+//
+//        for (int i = 0; i < e_size; i++) {
+//            for (int j = 0; j < n - k; j++) {
+//                for (int l = 0; l < e_size; l++) {
+//                    temp[i][j] += H[i][l] * A[(k + l) * n + (k + j)];
+//                }
+//            }
+//        }
+//
+//        for (int i = 0; i < e_size; i++) {
+//            for (int j = 0; j < n - k; j++) {
+//                A[(k + i) * n + (k + j)] = temp[i][j];
+//            }
+//        }
+//    }
+//}
+__device__ void print_vector(double *vec, int size, const char *name) {
+  printf("%s:\n", name);
+  for (int i = 0; i < size; i++) {
+    printf("  vec[%d] = %f\n", i, vec[i]);
+  }
+}
+
+__device__ void print_matrix(double *mat, int rows, int cols, const char *name) {
+  printf("%s:\n", name);
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      printf("  mat[%d][%d] = %f\n", i, j, mat[i * cols + j]);
+    }
+  }
+}
+
+__device__ void
+householderQR_device(double *A, int m, int n, double *x, double *e, double *u, double *v, double *H, double *temp) {
+    for (int k = 0; k < n; k++) {
+        printf("k = %d\n", k);
+        int e_size = m - k;
+        for (int i = 0; i < e_size; i++) {
+            if (i == 0) {
+                e[i] = 1.0;
+                continue;
+            }
+            e[i] = 0.0;
+        }
+        for (int i = k; i < m; i++) x[i - k] = A[i * n + k];
+        double x_norm = 0;
+        for (int i = 0; i < e_size; i++) x_norm += x[i] * x[i];
+        x_norm = sqrt(x_norm);
+        double sign_x = 0.0;
+
+        if (x[0] >= 0) sign_x = 1;
+        else sign_x = -1;
+
+        for (int i = 0; i < e_size; i++) u[i] = sign_x * x_norm * e[i] + x[i];
+        double u_norm = 0;
+        for (int i = 0; i < e_size; i++) u_norm += u[i] * u[i];
+        u_norm = sqrt(u_norm);
+        for (int i = 0; i < e_size; i++) v[i] = u[i] / u_norm;
+
+
+        print_vector(v, e_size, "v");
+
+        for (int i = 0; i < e_size; i++) {
+            for (int j = 0; j < e_size; j++) {
+                H[i * e_size + j] = (i == j) ? 1 : 0;
+                H[i * e_size + j] -= 2 * v[i] * v[j];
+            }
+        }
+
+        print_matrix(H, e_size, e_size, "H");
+
+        for (int i = 0; i < e_size; i++) {
+            for (int j = 0; j < n - k; j++) {
+                for (int l = 0; l < e_size; l++) {
+                    temp[i * (n - k) + j] += H[i * e_size + l] * A[(k + l) * n + (k + j)];   //problem here, step 2, H is right, A should be right (indicing is wrong?)
+                }
+            }
+        }
+
+        for (int i = 0; i < e_size; i++) {
+            for (int j = 0; j < n - k; j++) {
+                A[(k + i) * n + (k + j)] = temp[i * (n - k) + j];
+            }
+        }
+        print_matrix(temp, e_size, n - k, "temp");
+    }
+}
+
+__global__ void
+householderQR_global(double *A, int m, int n, double *x, double *e, double *u, double *v, double *H, double *temp) {
+    householderQR_device(A, m, n, x, e, u, v, H, temp);
+}
+
+int JTQuant::TestSuites::householder_qr_gpu_test() {
+    int m = 4; // number of rows in the matrix A
+    int n = 3; // number of columns in the matrix A
+    vector<vector<double>> A_h = {
+            {1.0, -1.0, 4.0},
+            {1.0, 4.0,  -2.0},
+            {1.0, 4.0,  2.0},
+            {1.0, -1.0, 0.0}
+    };
+
+    double *A_d; // device array for the matrix A
+    double *x, *e, *u, *v, *H, *temp;
+    cudaMallocManaged((void **) &A_d, m * n * sizeof(double));
+    cudaMallocManaged((void **) &x, m * sizeof(double));
+    cudaMallocManaged((void **) &e, m * sizeof(double));
+    cudaMallocManaged((void **) &u, m * sizeof(double));
+    cudaMallocManaged((void **) &v, m * sizeof(double));
+    cudaMallocManaged((void **) &H, m * m * sizeof(double));
+    cudaMallocManaged((void **) &temp, m * (n - 0) * sizeof(double));
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            A_d[i * n + j] = A_h[i][j];
+        }
+    }
+    dim3 grid(1, 1);
+    dim3 block(1, 1);
+    householderQR_global<<<grid, block>>>(A_d, m, n, x, e, u, v, H, temp);
+    cudaDeviceSynchronize();
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            cout << A_d[i * n + j] << " ";
+        }
+        cout << endl;
+    }
+    cudaFree(x);
+    cudaFree(e);
+    cudaFree(u);
+    cudaFree(v);
+    cudaFree(H);
+    cudaFree(temp);
     return 0;
 }
 
